@@ -39,6 +39,7 @@ struct PointSetViewModel: PointSetViewBindable {
     let pointB: Driver<PointInfo?>
     let currentPoint: Driver<PointInfo>
     let canGoToResultView: Signal<Bool>
+    let needToClearLocationInfoBeforeNewOneIncome: Signal<Void>
     let pointNeedToSet = PublishRelay<Points>()
     
     var disposeBag = DisposeBag()
@@ -76,6 +77,10 @@ struct PointSetViewModel: PointSetViewBindable {
         
         // Fetch Point Information every time location update on MapView
         let newLocationIncoming = didEndChangeLocation.share()
+        
+        needToClearLocationInfoBeforeNewOneIncome = newLocationIncoming
+            .map{ _ in Void() }
+            .asSignal(onErrorJustReturn: Void())
         
         let address = newLocationIncoming
             .flatMapLatest(model.fetchAddressUsingCoordinate(coordinate:))

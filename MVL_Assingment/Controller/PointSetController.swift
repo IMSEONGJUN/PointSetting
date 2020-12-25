@@ -26,6 +26,7 @@ protocol PointSetViewBindable {
     var currentPoint: Driver<PointInfo> { get }
     var pointNeedToSet: PublishRelay<Points> { get }
     var canGoToResultView: Signal<Bool> { get }
+    var needToClearLocationInfoBeforeNewOneIncome: Signal<Void> { get }
 }
 
 final class PointSetController: UIViewController {
@@ -107,6 +108,12 @@ final class PointSetController: UIViewController {
         
         viewModel.pointB
             .drive(pointResultView.bPointDetailLabel.rx.setFullPointInfo)
+            .disposed(by: disposeBag)
+        
+        viewModel.needToClearLocationInfoBeforeNewOneIncome
+            .emit(onNext: { [weak self] in
+                self?.pointSetMapView.pointInfoLabel.text = ""
+            })
             .disposed(by: disposeBag)
     }
 

@@ -103,9 +103,9 @@ extension PointSetMapView: GMSMapViewDelegate {
 
 extension PointSetMapView: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-            let location = locations.last
-            let camera = GMSCameraPosition.camera(withLatitude: (location?.coordinate.latitude)!, longitude:(location?.coordinate.longitude)!, zoom:14)
-            mapView.animate(to: camera)
-            manager.stopUpdatingLocation()
+        guard let location = locations.last else { return }
+        let camera = GMSCameraPosition.camera(withLatitude: location.coordinate.latitude, longitude:location.coordinate.longitude, zoom:14)
+        mapView.animate(to: camera)
+        manager.stopUpdatingLocation()
     }
 }
